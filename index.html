@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#eaf4fb">
+<title>一橹一穆 · Demo</title>
+  <link rel="stylesheet" href="style.css?v=113">
+</head>
+<body>
+<!-- 全屏场景 -->
+<div class="scene-wrap">
+  <div class="scene" id="scene">
+    <img class="room-bg" id="roomBg" src="assets/room/room-bg.jpg" alt="房间">
+    <img class="char-sprite cool" id="fig-wang" alt="王橹杰">
+    <img class="char-sprite char-expression hidden" id="face-wang" alt="">
+    <img class="char-sprite char-accessory hidden" id="acc-necklace-wang" alt="">
+    <img class="char-sprite char-accessory hidden" id="acc-glasses-wang" alt="">
+    <img class="char-sprite char-accessory hidden" id="acc-headwear-wang" alt="">
+    <img class="char-sprite pink" id="fig-mu" alt="穆祉丞">
+    <img class="char-sprite char-expression hidden" id="face-mu" alt="">
+    <img class="char-sprite char-accessory hidden" id="acc-necklace-mu" alt="">
+    <img class="char-sprite char-accessory hidden" id="acc-glasses-mu" alt="">
+    <img class="char-sprite char-accessory hidden" id="acc-headwear-mu" alt="">
+    <img class="sleep-pose hidden" id="sleepPose" alt="午睡或夜间睡觉">
+    <video class="sleep-pose hidden" id="adultSleepPose" src="assets/chars/adult-sleep-pose.mov?v=1" muted loop playsinline preload="auto" aria-label="成年睡姿"></video>
+    <div class="play-feedback-layer" id="playFeedbackLayer" aria-live="polite"></div>
+    <button class="phone-shortcut hidden" id="btnPhone" aria-label="查看手机聊天">
+      <img src="assets/ui/item-phone.png?v=2" alt="">
+      <span class="phone-badge hidden" id="phoneBadge">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- 启动页 -->
+<div class="start-screen" id="startScreen">
+  <div class="start-artwork">
+    <img class="start-cover" src="assets/room/start-screen.png" alt="一橹一穆，陪伴每一个日常。假如我们一起长大。" width="941" height="1672">
+    <button class="start-hotspot start-play" id="btnStartGame" aria-label="开始游戏"></button>
+    <button class="start-hotspot start-help" id="btnStartGuide" aria-label="玩法说明"></button>
+    <button class="start-hotspot start-settings" id="btnStartSettings" aria-label="设置"></button>
+    <div class="start-loading hidden" id="startLoading" role="status">正在准备人物画面…</div>
+  </div>
+</div>
+
+<!-- 图文玩法说明：独立于合成小游戏手册 -->
+<div class="overlay hidden" id="overlayGuide" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+  <div class="overlay-card guide-card">
+    <div class="overlay-head"><h2 id="guideTitle">玩法说明</h2><button class="btn small" id="btnCloseGuide">关闭</button></div>
+    <div class="guide-topics" id="guideTopics" aria-label="选择玩法主题">
+      <button data-guide-page="0">目标</button><button data-guide-page="1">羁绊</button><button data-guide-page="2">商店</button><button data-guide-page="3">舞台</button><button data-guide-page="4">合成</button><button data-guide-page="5">作息</button><button data-guide-page="6">记录</button>
+    </div>
+    <div class="guide-body" id="guideBody" tabindex="0">
+      <article class="guide-page" data-guide-section>
+        <div class="guide-kicker">01 / 游戏目标</div><h3>陪他们长大，见证恋爱</h3>
+        <div class="guide-choice"><span class="guide-number">1</span>从婴儿养到成年；幼年、少年、成年各奖励 50 金币</div>
+        <div class="guide-choice"><span class="guide-number">2</span>成年后羁绊达到 99，解锁恋爱、约会与更多剧情</div>
+        <div class="guide-art guide-growth-art">
+          <figure class="guide-growth-row"><figcaption>LuLu</figcaption><img src="assets/chars/wlj-growth-preview.png?v=2" alt="LuLu 从婴儿、幼年、少年到成年的成长预览"><div class="guide-growth-stages" aria-hidden="true"><span>婴儿</span><span>幼年</span><span>少年</span><span>成年</span></div></figure>
+          <figure class="guide-growth-row"><figcaption>MuMu</figcaption><img src="assets/chars/mzc-growth-preview.png?v=2" alt="MuMu 从婴儿、幼年、少年到成年的成长预览"><div class="guide-growth-stages" aria-hidden="true"><span>婴儿</span><span>幼年</span><span>少年</span><span>成年</span></div></figure>
+        </div>
+        <div class="guide-actions">
+          <div><img src="assets/ui/action-feed.png" alt="喂食"><b>喂食</b><small>恢复饱食</small></div>
+          <div><img src="assets/ui/action-bath.png" alt="洗澡"><b>洗澡</b><small>恢复清洁</small></div>
+          <div><img src="assets/ui/action-play.png" alt="玩耍"><b>玩耍</b><small>心情↑ 精力↓</small></div>
+        </div>
+        <p class="guide-tip">先点头像选人，再照顾；也能选择「两个一起」。点 ☰ 查看状态。</p>
+      </article>
+      <article class="guide-page hidden" data-guide-section>
+        <div class="guide-kicker">02 / 羁绊与惩罚</div><h3>时刻关注他们状态</h3>
+        <div class="guide-line"><b>低状态</b><span>饱食、清洁或心情低于 20，羁绊会下降；持续过低会生病</span></div>
+        <div class="guide-line"><b>成年恋爱</b><span>24 游戏小时不约会，羁绊 -3、心情下降；心情过低还会扣羁绊</span></div>
+        <div class="guide-art guide-bond-art"><img src="assets/ui/item-doll.png" alt="剧情道具玩偶"><span class="guide-heart">♥</span><img src="assets/ui/ticket-park.png" alt="公园约会门票"><div class="guide-bond-bar"><span></span><b>羁绊慢慢积累</b></div></div>
+        <div class="guide-line"><b>日常陪伴</b><span>每个游戏日 +1 羁绊</span></div>
+        <div class="guide-line"><b>剧情道具（可重复使用）</b><span>在背包使用，触发故事与羁绊</span><small>每次消耗 1 件，可再次购买使用。</small></div>
+        <div class="guide-line"><b>成年以后</b><span>羁绊到 99，开启恋爱与约会</span></div>
+        <div class="guide-line"><b>冷落</b><span>成年前 20 游戏小时不照顾，羁绊 -3</span></div>
+        <p class="guide-tip">吵架、绝交或分手时，每日陪伴不加羁绊；可以用挽回行动修复关系。</p>
+      </article>
+      <article class="guide-page hidden" data-guide-section>
+        <div class="guide-kicker">03 / 商店与背包</div><h3>买好以后，去背包找</h3>
+        <div class="guide-art guide-shop-art"><div class="guide-item-card"><img src="assets/ui/accessories/cat_ears.png" alt="猫耳配饰"><b>猫耳</b><small>MuMu 专属</small><span>20 <img src="assets/ui/coin-ribbon-badge.png" alt="金币"></span></div><div class="guide-item-card"><img src="assets/ui/item-doll.png" alt="玩偶道具"><b>剧情道具</b><small>购买后收入背包</small><span>确认购买</span></div></div>
+        <div class="guide-flow"><div><img src="assets/ui/action-shop.png" alt=""><b>选商品</b></div><span>→</span><div><img src="assets/ui/coin-ribbon-badge.png" alt=""><b>确认购买</b></div><span>→</span><div><img src="assets/ui/action-bag.png" alt=""><b>背包使用</b></div></div>
+        <div class="guide-line"><b>人物配饰</b><span>成年解锁；购买不自动戴上</span></div>
+        <p class="guide-tip">在背包点击「佩戴」或「取下」。商品多时，在列表内上下滑动。</p>
+      </article>
+      <article class="guide-page hidden" data-guide-section>
+        <div class="guide-kicker">04 / 助力双人舞台</div><h3>看方向，按顺序</h3>
+        <p class="guide-tip">少年期解锁双人舞台。</p>
+        <div class="guide-art guide-dance-art"><img src="assets/chars/dance-up.png" alt="双人舞姿"><div class="guide-sequence" aria-label="示例：左、上、右"><span>←<small>1</small></span><span>↑<small>2</small></span><span>→<small>3</small></span></div></div>
+        <div class="guide-choice"><span class="guide-number">1</span>随机出现 2、3 或 4 个方向</div>
+        <div class="guide-choice"><span class="guide-number">2</span>倒计时内，从左到右依次点击方向键</div>
+        <div class="guide-choice"><span class="guide-number">3</span>完成组合得分；按错或超时，本轮结束</div>
+        <p class="guide-tip">不是同时按！连续完成组合会累计连击，下一组的倒计时会分档缩短：</p>
+        <div class="guide-time-rules" aria-label="各连击阶段的按键组合倒计时">
+          <div><b>连击数</b><span>2 个键</span><span>3 个键</span><span>4 个键</span></div>
+          <div><b>0～10</b><span>6 秒</span><span>5 秒</span><span>4 秒</span></div>
+          <div><b>11～27</b><span>3 秒</span><span>4 秒</span><span>4 秒</span></div>
+          <div><b>28 起</b><span>3 秒</span><span>3 秒</span><span>3 秒</span></div>
+        </div>
+        <p class="guide-tip">可暂停，历史最高会保留。</p>
+        <div class="guide-reward"><img src="assets/ui/coin-ribbon-badge.png" alt="">每个游戏日最多获得 50 金币 · 游戏时间午夜重置</div>
+      </article>
+      <article class="guide-page hidden" data-guide-section>
+        <div class="guide-kicker">05 / 合成小游戏</div><h3>找到两个一样的，点点合成</h3>
+        <div class="guide-art guide-merge-art"><div class="guide-merge-demo"><img src="assets/merge/A1.png" alt="一件初级素材"><span>＋</span><img src="assets/merge/A1.png" alt="相同的初级素材"><span>→</span><img src="assets/merge/A2.png" alt="升级后的素材"></div><div class="guide-merge-demo"><img src="assets/merge/A5.png" alt="一种高级素材"><span>＋</span><img src="assets/merge/B5.png" alt="另一种高级素材"><span>→</span><img src="assets/merge/heart.png" alt="爱心"></div></div>
+        <div class="guide-choice"><span class="guide-number">1</span>先点击一件，再点击另一件相同物品</div>
+        <div class="guide-choice"><span class="guide-number">2</span>同系列、同等级合成升级，最高到五阶</div>
+        <div class="guide-choice"><span class="guide-number">3</span>两种最高级素材合成爱心；每颗爱心值 5 金币</div>
+        <p class="guide-tip">从「小游戏」进入。游戏里的手册可以查看完整合成路线。</p>
+      </article>
+      <article class="guide-page hidden" data-guide-section>
+        <div class="guide-kicker">06 / 时间与作息</div><h3>他们也需要好好休息</h3>
+        <div class="guide-art guide-sleep-art"><img src="assets/chars/child-sleep-pose.png" alt="两人一起睡觉"><span>夜间睡觉 23:00 — 08:00</span></div>
+        <div class="guide-line"><b>成年以前</b><span>还有 12:00 — 13:00 的午睡</span></div>
+        <div class="guide-line"><b>睡觉期间</b><span>照顾、道具、约会、双人舞台不可用</span></div>
+        <div class="guide-line"><b>生病了</b><span>在背包选中生病人物用药；成年后不再生病</span></div>
+        <div class="guide-line"><b>仍然可以</b><span>打开已解锁的手机，回看聊天</span></div>
+        <p class="guide-tip">每日次数按游戏时钟的午夜重置。离线也会成长；☰ 可调整时间速度。</p>
+      </article>
+      <article class="guide-page hidden" data-guide-section>
+        <div class="guide-kicker">07 / 留住每个日常</div><h3>故事，慢慢收集</h3>
+        <div class="guide-art guide-chat-art"><img src="assets/ui/item-phone.png" alt="手机"><div class="guide-chat-bubbles"><span>新的日常聊天，解锁了。</span><span>以前的消息，也能回看。</span><small>聊天内容示意</small></div></div>
+        <div class="guide-line"><b>手机聊天</b><span>少年期起可购买；每个游戏日解锁一段闲聊；首次读完羁绊 +3</span></div>
+        <div class="guide-line"><b>剧情与记录</b><span>在 ☰ 中回看剧情收录、日常记录</span></div>
+        <div class="guide-line"><b>记得存档</b><span>进度自动保存，也可在设置导出备份</span></div>
+        <div class="guide-reward"><img src="assets/ui/coin-ribbon-badge.png" alt="">每个游戏日签到 +10 金币 · 游戏时间午夜重置</div>
+        <p class="guide-tip">先选择人物，照顾一次，就开始你们的日常吧。</p>
+      </article>
+    </div>
+    <div class="guide-nav"><button class="btn small" id="btnGuidePrev">上一页</button><span id="guidePageCount" aria-live="polite">1 / 7</span><button class="btn small primary" id="btnGuideNext">下一页</button></div>
+  </div>
+</div>
+
+<!-- 剧情对话：两人同屏、年龄由剧情指定 -->
+<div class="story-overlay hidden" id="storyOverlay" role="dialog" aria-modal="true" aria-labelledby="storyTitle">
+  <div class="story-bg active" id="storyBgA" data-scene="room" aria-hidden="true"></div>
+  <div class="story-bg" id="storyBgB" data-scene="room" aria-hidden="true"></div>
+  <div class="story-center">
+    <div class="story-top"><span id="storyTitle"></span><nav aria-label="剧情控制">
+      <button class="hidden" id="btnStoryVideo" type="button">▶ 视频</button>
+      <button id="btnStoryHistory" type="button">回看</button>
+      <button id="btnStoryAuto" type="button" aria-pressed="false">自动</button>
+      <button id="btnStorySkip" type="button">跳过</button>
+    </nav></div>
+    <img class="story-img hidden" id="storyImg" alt="剧情插画">
+    <div class="story-stage" id="storyStage">
+      <div class="story-lh left" id="lh-wang" role="img" aria-label="王橹杰"></div>
+      <div class="story-lh right" id="lh-mu" role="img" aria-label="穆祉丞"></div>
+    </div>
+    <div class="story-dialog" id="storyDialog" tabindex="0" role="button" aria-label="继续剧情">
+      <span class="story-name hidden" id="storyName"></span>
+      <div class="story-text" id="storyText"></div>
+      <span class="story-next" id="storyNext">点击继续 ▸</span>
+    </div>
+    <section class="story-history hidden" id="storyHistory" aria-label="已读对话"><div class="story-history-head"><b>对话回看</b><button id="btnStoryHistoryClose" type="button">返回</button></div><div id="storyHistoryList"></div></section>
+    <section class="story-video hidden" id="storyVideoPanel" aria-label="温泉剧情视频">
+      <div class="story-video-bar"><b>温泉 · 剧情视频</b><button id="btnStoryVideoClose" type="button">返回剧情</button></div>
+      <video id="storyVideo" controls playsinline preload="auto" aria-label="温泉剧情视频"></video>
+      <p id="storyVideoError" aria-live="polite"></p>
+    </section>
+  </div>
+</div>
+
+<!-- 顶栏 -->
+<header class="hud-top">
+  <div class="hud-left">
+    <div class="title-row">
+      <h1><img class="title-mark" src="assets/ui/home-heart-cottage.png?v=3" alt="">一橹一穆🩵🩷</h1>
+      <div class="clock"><img class="clock-icon" src="assets/ui/status-clock.png?v=1" alt=""><span id="clock">第 1 天 08:00</span></div>
+    </div>
+    <div class="avatars">
+      <button class="avatar-chip cool" id="av-wang"><span class="av-face" id="avface-wang">😊</span><b>LuLu</b></button>
+      <button class="avatar-chip pink" id="av-mu"><span class="av-face" id="avface-mu">😊</span><b>MuMu</b></button>
+    </div>
+  </div>
+  <div class="hud-right">
+    <div class="quick-btns">
+      <button id="btnCheckIn" class="btn small">签到</button>
+      <button id="btnSave" class="btn small">存档</button>
+      <button id="btnReset" class="btn small danger">重置</button>
+      <button id="btnSettings" class="btn small icon-button" aria-label="设置"><img class="ui-icon" src="assets/ui/settings-heart-gear.png?v=3" alt=""></button>
+    </div>
+    <div class="top-stats">
+      <div class="cb-row">
+        <div class="coins" aria-label="金币"><img src="assets/ui/coin-ribbon-badge.png?v=3" alt=""><span id="coins">0</span></div>
+        <div class="bond-meter" aria-label="羁绊值">
+          <span class="bond-heart" aria-hidden="true">♥</span>
+          <div class="bar bar-bond top"><div class="fill" id="bondFill"></div><span class="bond-num" id="bondNum">38 / 99</span></div>
+        </div>
+      </div>
+      <span class="bond-state top" id="bondState">普通朋友</span>
+    </div>
+    <div class="hud-btns">
+      <a id="btnSurveyHome" class="btn small survey-link survey-shortcut" href="https://v.wjx.cn/vm/rQMgdEb.aspx" aria-label="填写体验问卷"><span aria-hidden="true">📝</span> 问卷</a>
+      <button id="btnMenu" class="btn small">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- 右侧信息栏 -->
+<aside class="hud-side" id="sidePanel">
+  <button class="side-close" id="btnSideClose">✕</button>
+
+  <div class="side-title">⚙️ 速度</div>
+  <div class="speed" id="speedBox"></div>
+
+  <div class="side-title">💞 关系</div>
+  <div class="side-line status-text" id="bondHint"></div>
+
+  <div class="side-title">👥 状态</div>
+  <div class="mini-card cool">
+    <div class="mini-head"><span class="mini-name">LuLu</span><span class="mini-stage" id="stage-wang">婴儿 · 0岁</span></div>
+    <div class="mini-stat"><span>🍚</span><div class="bar"><div class="fill good" id="bh-wang"></div></div><b id="vh-wang">100</b></div>
+    <div class="mini-stat"><span>🛁</span><div class="bar"><div class="fill good" id="bc-wang"></div></div><b id="vc-wang">100</b></div>
+    <div class="mini-stat"><span>🎈</span><div class="bar"><div class="fill good" id="bm-wang"></div></div><b id="vm-wang">100</b></div>
+    <div class="mini-stat"><span>⚡</span><div class="bar"><div class="fill good" id="be-wang"></div></div><b id="ve-wang">100</b></div>
+    <div class="mini-status" id="status-wang">状态良好</div>
+  </div>
+  <div class="mini-card pink">
+    <div class="mini-head"><span class="mini-name">MuMu</span><span class="mini-stage" id="stage-mu">婴儿 · 0岁</span></div>
+    <div class="mini-stat"><span>🍚</span><div class="bar"><div class="fill good" id="bh-mu"></div></div><b id="vh-mu">100</b></div>
+    <div class="mini-stat"><span>🛁</span><div class="bar"><div class="fill good" id="bc-mu"></div></div><b id="vc-mu">100</b></div>
+    <div class="mini-stat"><span>🎈</span><div class="bar"><div class="fill good" id="bm-mu"></div></div><b id="vm-mu">100</b></div>
+    <div class="mini-stat"><span>⚡</span><div class="bar"><div class="fill good" id="be-mu"></div></div><b id="ve-mu">100</b></div>
+    <div class="mini-status" id="status-mu">状态良好</div>
+  </div>
+  <div class="side-line">
+    <button id="btnGallery" class="btn small">📖 剧情收录</button>
+    <button id="btnLog" class="btn small">📜 日常记录</button>
+  </div>
+</aside>
+
+<!-- 底部操作面板 -->
+<button class="action-toggle" id="actionToggle">▲</button>
+<nav class="hud-bottom" id="actionBar">
+  <div class="panel-head"><span>操作面板</span><button class="btn small" id="btnCollapse">▼ 收起</button></div>
+  <div class="care-row">
+    <span class="row-label">照顾</span>
+    <select id="target">
+      <option value="both">两个一起</option>
+      <option value="wang">LuLu</option>
+      <option value="mu">MuMu</option>
+    </select>
+    <button class="btn icon" id="btnFeed"><img class="action-icon" src="assets/ui/action-feed.png?v=1" alt="">喂食</button>
+    <button class="btn icon" data-care="bath"><img class="action-icon" src="assets/ui/action-bath.png?v=1" alt="">洗澡</button>
+    <button class="btn icon" data-care="play"><img class="action-icon" src="assets/ui/action-play.png?v=1" alt="">玩耍</button>
+  </div>
+  <div class="care-row">
+    <span class="row-label">功能</span>
+    <button id="btnShop" class="btn icon shop"><img class="action-icon" src="assets/ui/action-shop.png?v=1" alt="">商店</button>
+    <button id="btnBag" class="btn icon"><img class="action-icon" src="assets/ui/action-bag.png?v=1" alt="">背包</button>
+        <button id="btnMerge" class="btn icon play"><img class="action-icon" src="assets/ui/action-merge.png?v=1" alt="">小游戏</button>
+    <button id="btnDance" class="btn icon dance"><img class="action-icon" src="assets/ui/action-play.png?v=1" alt="">双人舞台</button>
+  </div>
+  <div id="extraRow">
+    <div class="care-row recover hidden" id="recoverPanel">
+      <span class="row-label" id="recoverTitle">挽回</span>
+      <button class="btn icon" data-recover="gift"><img class="action-icon" src="assets/ui/action-gift.png?v=1" alt="">30</button>
+      <button class="btn icon" data-recover="xiaojiao"><img class="action-icon" src="assets/ui/action-cute.png?v=1" alt="">撒娇</button>
+      <button class="btn icon" data-recover="tanxin"><img class="action-icon" src="assets/ui/action-talk.png?v=1" alt="">谈心</button>
+    </div>
+  </div>
+</nav>
+
+<!-- 食物选择弹层 -->
+<div class="overlay hidden" id="overlayFood">
+  <div class="overlay-card wide fixed-panel">
+    <div class="overlay-head"><h2>🍚 喂食</h2><button class="btn small" id="btnCloseFood">关闭</button></div>
+    <div class="food-tabs">
+      <button class="btn small active" id="tabStaple">主食</button>
+      <button class="btn small" id="tabDessert">甜品</button>
+    </div>
+    <div class="food-grid" id="foodGrid"></div>
+    <div class="hint" id="foodHint"></div>
+  </div>
+</div>
+
+<!-- 商店弹层 -->
+<div class="overlay hidden" id="overlayShop">
+  <div class="overlay-card wide fixed-panel">
+    <div class="overlay-head"><h2><img class="overlay-title-icon" src="assets/ui/action-shop.png?v=1" alt="">商店</h2><button class="btn small" id="btnCloseShop">关闭</button></div>
+    <div class="food-tabs">
+      <button class="btn small active" id="shopTabFunc">功能道具</button>
+      <button class="btn small" id="shopTabStory">剧情道具</button>
+      <button class="btn small" id="shopTabTicket">约会门票</button>
+      <button class="btn small" id="shopTabAccessory">人物配饰</button>
+    </div>
+    <div class="shop-list" id="shopList"></div>
+    <div class="hint" id="shopHint"></div>
+  </div>
+</div>
+
+<!-- 背包弹层 -->
+<div class="overlay hidden" id="overlayBag">
+  <div class="overlay-card wide fixed-panel">
+    <div class="overlay-head"><h2><img class="overlay-title-icon" src="assets/ui/action-bag.png?v=1" alt="">背包</h2><button class="btn small" id="btnCloseBag">关闭</button></div>
+    <div class="food-tabs">
+      <button class="btn small active" id="bagTabFunc">功能道具</button>
+      <button class="btn small" id="bagTabStory">剧情道具</button>
+      <button class="btn small" id="bagTabTicket">约会门票</button>
+      <button class="btn small" id="bagTabAccessory">人物配饰</button>
+    </div>
+    <div class="shop-list" id="bagList"></div>
+  </div>
+</div>
+
+<!-- 游戏内确认弹窗 -->
+<div class="overlay hidden" id="overlayConfirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="overlay-card confirm-card">
+    <h2 id="confirmTitle">确认使用</h2>
+    <p id="confirmText"></p>
+    <div class="confirm-actions">
+      <button class="btn" id="btnConfirmCancel">取消</button>
+      <button class="btn danger" id="btnConfirmOk">确定使用</button>
+    </div>
+  </div>
+</div>
+
+<!-- 成长提示 -->
+<div class="overlay hidden" id="overlayStage" role="dialog" aria-modal="true" aria-labelledby="stageNoticeTitle">
+  <div class="overlay-card stage-notice-card">
+    <div class="stage-notice-kicker">成长记录</div>
+    <h2 id="stageNoticeTitle">长大啦！</h2>
+    <p id="stageNoticeText"></p>
+    <button class="btn primary" id="btnStageContinue">继续看看</button>
+  </div>
+</div>
+
+<!-- 剧情：合成手册 -->
+<div class="overlay hidden" id="overlayManual">
+  <div class="manual-wrap">
+    <img id="manualImg" src="assets/merge/shouce1.png" alt="手册">
+    <div class="manual-nav">
+      <button class="btn" id="btnManualPrev" aria-label="上一页"></button>
+      <span id="manualPage">1 / 2</span>
+      <button class="btn" id="btnManualNext" aria-label="下一页"></button>
+    </div>
+    <button class="btn small" id="btnCloseManual">关闭</button>
+  </div>
+</div>
+
+<!-- 合成：暂停弹窗 -->
+<div class="overlay hidden" id="overlayPause">
+  <div class="pause-wrap">
+    <img id="pauseImg" src="assets/merge/stop.png" alt="暂停">
+    <button class="pause-hotspot home" id="btnPauseHome" aria-label="返回首页"></button>
+    <button class="pause-hotspot restart" id="btnPauseRestart" aria-label="重新开始"></button>
+  </div>
+</div>
+
+<!-- 设置弹层 -->
+<div class="overlay hidden" id="overlaySettings">
+  <div class="overlay-card wide fixed-panel">
+    <div class="overlay-head"><h2>⚙️ 设置</h2><button class="btn small" id="btnCloseSettings">关闭</button></div>
+    <div class="overlay-scroll-body">
+      <div class="set-group">
+        <div class="set-title">🔊 声音</div>
+        <div class="set-row"><label for="setMusic">🎵 音乐</label><input type="range" id="setMusic" min="0" max="100" value="70"></div>
+        <div class="set-row"><label for="setSfx">🔊 音效</label><input type="range" id="setSfx" min="0" max="100" value="70"></div>
+        <div class="set-row"><label for="setVoice">🎙️ 人声</label><input type="range" id="setVoice" min="0" max="100" value="70"></div>
+        <div class="set-row"><button class="btn small" id="setMute">🔊 未静音</button></div>
+      </div>
+      <div class="set-group">
+        <div class="set-title">🔤 字体大小</div>
+        <div class="set-row">
+          <button class="btn small" id="fs-small">小</button>
+          <button class="btn small active" id="fs-std">标准</button>
+          <button class="btn small" id="fs-large">大</button>
+        </div>
+      </div>
+      <div class="set-group">
+        <div class="set-title">💾 存档</div>
+        <div class="set-row save-actions">
+          <button class="btn" id="btnExport">📤 导出存档</button>
+          <button class="btn" id="btnImport">📥 导入存档</button>
+          <button class="btn danger" id="btnResetSettings">🗑️ 重置游戏</button>
+        </div>
+        <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+      </div>
+      <div class="set-group">
+        <div class="set-title">💬 体验反馈</div>
+        <a class="btn survey-link" id="btnSurvey" href="https://v.wjx.cn/vm/rQMgdEb.aspx">填写 1.0 版体验问卷</a>
+        <p class="survey-note">每人请仅填写一次。</p>
+      </div>
+      <div class="set-group">
+        <div class="set-title">📖 上手指南</div>
+        <button class="btn" id="btnSettingsGuide">玩法说明</button>
+      </div>
+      <div class="set-group">
+        <div class="set-title">制作信息</div>
+        <button class="btn" id="btnCredits">制作与鸣谢</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 制作与鸣谢 -->
+<div class="overlay hidden" id="overlayCredits" role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
+  <div class="overlay-card wide fixed-panel credits-card">
+    <div class="overlay-head"><h2 id="creditsTitle">制作与鸣谢</h2><button class="btn small" id="btnCloseCredits">关闭</button></div>
+    <div class="overlay-scroll-body credits-body" id="creditsBody" tabindex="0">
+      <h3>制作与鸣谢</h3>
+      <dl>
+        <dt>游戏策划／制作</dt><dd>没人吃我的饭就跳☔️</dd>
+        <dt>程序开发</dt><dd>没人吃我的饭就跳☔️</dd>
+        <dt>美术与立绘</dt><dd>没人吃我的饭就跳☔️<small>（场景及开屏页面借助AI工具）</small></dd>
+        <dt>剧情与聊天文本</dt><dd>没人吃我的饭就跳☔️<small>「哆啦A梦主题蛋糕」「巧克力蛋糕」剧情由啵啵果子李🫐撰写</small></dd>
+      </dl>
+      <h3>音乐与音频署名</h3>
+      <dl>
+        <dt>游戏内音乐</dt><dd>等你的季节橹穆片段</dd>
+        <dt>音频片段制作／版权归属</dt><dd>LuLuMuse</dd>
+        <dt>播放场景</dt><dd>LuLu、MuMu 同时佩戴耳机时循环播放</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<!-- 手机聊天列表 -->
+<div class="overlay hidden" id="overlayPhone">
+  <div class="overlay-card wide fixed-panel phone-library">
+    <div class="chat-status"><span id="phoneListClock">10:24</span><span class="notch"></span><span class="status-battery" aria-hidden="true"></span></div>
+    <div class="overlay-head"><h2>聊天记录</h2><button class="btn small" id="btnClosePhone">关闭</button></div>
+    <p class="hint">每个游戏日解锁一段闲聊；部分聊天需恋爱后解锁。每段首次读完羁绊 +3。</p>
+    <div class="phone-thread-list" id="phoneThreadList"></div>
+  </div>
+</div>
+
+<!-- 手机聊天弹层 -->
+<div class="overlay hidden" id="overlayChat">
+  <div class="phone">
+    <div class="chat-screen">
+      <div class="chat-status"><span id="chatClock">10:24</span><span class="notch"></span><span class="status-battery" aria-hidden="true"></span></div>
+      <div class="chat-head">
+        <button class="btn small" id="btnCloseChat"><span aria-hidden="true">‹</span> 返回</button>
+        <div class="chat-contact"><div class="chat-contact-avatars" aria-hidden="true"><img src="assets/chars/wlj-phone-touxiang.jpg" alt=""><img src="assets/chars/mzc-phone-touxiang.jpg" alt=""></div><span class="chat-title" id="chatName">271199</span></div>
+      </div>
+      <div class="chat-list" id="chatList"></div>
+      <div class="chat-hint">点屏幕查看下一条消息</div>
+    </div>
+  </div>
+</div>
+
+<!-- 剧情收录弹层 -->
+<div class="overlay hidden" id="overlayGallery">
+  <div class="overlay-card wide fixed-panel">
+    <div class="overlay-head"><h2>📖 剧情收录</h2><button class="btn small" id="btnCloseGallery">关闭</button></div>
+    <div class="shop-list" id="galleryList"></div>
+  </div>
+</div>
+<!-- 日志弹层 -->
+<div class="overlay hidden" id="overlayLog">
+  <div class="overlay-card wide fixed-panel">
+    <div class="overlay-head"><h2>📜 日常记录</h2><button class="btn small" id="btnCloseLog">关闭</button></div>
+    <div id="logBox"></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayLove">
+  <div class="overlay-card">
+    <div class="big-hearts">🩵🩷</div>
+    <h2>恋爱进行时</h2>
+    <p>成年后<br>王橹杰鼓起勇气，牵住了穆祉丞的手。</p>
+    <button class="btn" id="btnCloseLove">好耶！</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overlayMerge">
+  <div class="overlay-card wide">
+    <div class="overlay-head"><h2>🧩 合成小游戏</h2><span id="mergeCoinsLabel">本局 💰<b id="mergeCoins">0</b></span></div>
+    <p class="hint merge-hint">同系列、同等级素材可合成升级<br>LuLu和MuMu可合成🩵🩷</p>
+    <div class="merge-board" id="mergeBoard"></div>
+    <div class="merge-foot">
+      <button class="btn small" id="btnManual">📖 手册</button>
+      <button class="btn small" id="btnPause">⏸ 暂停</button>
+      <button class="btn" id="btnCloseMerge">结束（结算入账）</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden dance-overlay" id="overlayDance">
+  <div class="dance-card">
+    <div class="dance-head"><h2>助力双人舞台</h2><div class="dance-head-actions"><button class="dance-help" id="btnDanceHelp" aria-label="查看教程">?</button><button class="btn small" id="btnDancePause">⏸ 暂停</button></div></div>
+    <div class="dance-stage">
+      <div class="dance-stats"><span>得分 <b id="danceScore">0</b></span><span>最高 <b id="danceHighScore">0</b></span><span>连击 <b id="danceCombo">0</b></span><span>金币 <b id="danceCoins">0</b></span></div>
+      <div class="dance-countdown" id="danceTime">—</div>
+      <div class="dance-characters"><img id="dancePose" src="assets/chars/dance-up-stage.png" alt="双人舞蹈姿势"></div>
+      <div class="dance-sequence" id="danceSequence"></div>
+      <div class="dance-hint" id="danceHint">按照顺序按下方向键</div>
+      <div class="dance-controls"><button class="dance-key up" data-dance-dir="up">↑</button><button class="dance-key left" data-dance-dir="left">←</button><button class="dance-key down" data-dance-dir="down">↓</button><button class="dance-key right" data-dance-dir="right">→</button></div>
+    </div>
+    <div class="dance-tutorial hidden" id="danceTutorial"><div class="dance-tutorial-card"><h2>双人舞台 · 新手说明</h2><ol><li>看上方提示，按相同方向</li><li>每组随机出现 2 个、3 个或 4 个方向</li><li>按错一次，马上结束本轮</li><li>完成组合可获得金币</li></ol><div class="dance-examples"><span>↑ →<small>2个</small></span><span>← ↑ ↓<small>3个</small></span><span>→ ↓ ← ↑<small>4个</small></span></div><button class="btn" id="btnDanceTutorialOk">知道了，开始</button></div></div>
+    <div class="dance-pause hidden" id="dancePause"><div class="dance-pause-card"><h2>游戏暂停</h2><button class="btn" id="btnDanceResume">继续游戏</button><button class="btn" id="btnDancePauseRestart">重新开始</button><button class="btn small" id="btnDanceExit">退出游戏</button></div></div>
+    <div class="dance-result hidden" id="danceResult"><div class="dance-result-panel"><h2 id="danceResultTitle">本轮结束</h2><div class="dance-result-summary" id="danceResultText"></div><div class="dance-result-actions"><button class="btn" id="btnDanceRestart">再来一轮</button><button class="btn small" id="btnDanceCloseResult">返回</button></div></div></div>
+  </div>
+</div>
+
+<div class="bubble hidden" id="bubble"></div>
+<div class="save-warning hidden" id="saveWarning" role="alert"></div>
+
+  <script src="story-data.js?v=10"></script>
+  <script src="extra-story-data.js?v=8"></script>
+  <script src="phone-data.js?v=2"></script>
+  <script src="game.js?v=194"></script>
+</body>
+</html>
