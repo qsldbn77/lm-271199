@@ -3061,7 +3061,9 @@ function init() {
   window.addEventListener('pageshow', checkSurveyReturn);
   if (window.matchMedia('(min-width: 1100px) and (min-aspect-ratio: 7/5)').matches) $id('sidePanel').classList.add('open');
   render();
-  preloadOpeningAssets();
+  const startCover = document.querySelector('.start-cover');
+  if (startCover.complete) preloadOpeningAssets();
+  else startCover.addEventListener('load', preloadOpeningAssets, { once: true });
   checkSurveyReturn();
   requestAnimationFrame(updatePhoneShortcutPosition);
   loadZones().then(() => { applyBehavior('wang'); applyBehavior('mu'); render(); });
